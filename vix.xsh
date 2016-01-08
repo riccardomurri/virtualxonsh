@@ -130,3 +130,9 @@ class VixCmd:
 
 
 aliases['vix'] = VixCmd()
+
+# compatibility aliases for virtualenvwrapper
+aliases['workon'] = 'vix activate'
+aliases['mkvirtualenv'] = 'vix new'
+aliases['rmvirtualenv'] = 'vix rm'
+aliases['lsvirtualenv'] = 'vix ls'
