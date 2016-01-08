@@ -5,6 +5,24 @@ import xonsh.environ
 if 'VIRTUALENV_HOME' not in __xonsh_env__:
     $VIRTUALENV_HOME = os.path.join($HOME, '.virtualenvs')
 
+if $VIRTUAL_ENV and 'vix' in aliases:
+    try:
+        vix deactivate
+    except:
+        pass
+
+
+# work around `name in __xonsh_env__` always returning true
+__notfound = object()
+
+def defined(name):
+    """
+    Return ``True`` if
+    """
+    val = __xonsh_env__.get(name, __notfound)
+    return False if val is __notfound else True
+
+
 class VixCmd:
     DISPATCH = {
         # subcmd      implemented in
@@ -49,13 +67,14 @@ class VixCmd:
             self.deactivate([])
 
         $VIRTUAL_ENV = target
-        self._saved_vars = {
-            v: __xonsh_env__.get(v)
-            for v in self.SAVE_VARS
-        }
+        for v in self.SAVE_VARS:
+            # only save vars that are actually defined
+            if defined(v):
+                self._saved_vars[v] = ${v}
 
         for v in self.EMPTY_VARS:
-            __xonsh_env__.pop(v, None)
+            if defined(v):
+                del ${v}
 
         $PATH.insert(0, os.path.join($VIRTUAL_ENV, 'bin'))
 
