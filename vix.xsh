@@ -31,6 +31,7 @@ class VixCmd:
         'deactivate': 'deactivate',
         'help':       'usage',
         'ls':         'listenvs',
+        'new':        'new',
         'rm':         'rmvirtualenv',
         'usage':      'usage',
     }
@@ -53,6 +54,23 @@ class VixCmd:
 
     # these vars should get an empty value upon `activate`
     EMPTY_VARS = {'PYTHONHOME', 'PIP_USER'}
+
+
+    def new(self, args):
+        if len(args) != 1:
+            return self.usage()
+
+        name = args[0]
+        target = os.path.join($VIRTUALENV_HOME, name)
+        if os.path.exists(target):
+            sys.stderr.write(
+                "ERROR: a directory `{}` already exists!"
+                .format(name))
+            return
+
+        python -m virtualenv @(target)
+        self.activate([name])
+
 
     def activate(self, args):
         if len(args) != 1:
