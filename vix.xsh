@@ -34,6 +34,7 @@ class VixCmd:
         'new':        'new',
         'rm':         'rmvirtualenv',
         'usage':      'usage',
+        'which':      'which',
     }
 
     def __call__(self, args, stdin=None):
@@ -46,6 +47,7 @@ class VixCmd:
         return impl(args)
 
     def __init__(self):
+        self._current_env = None
         # in case `deactivate` is called before `activate` is
         self._saved_vars = {}
 
@@ -76,7 +78,8 @@ class VixCmd:
         if len(args) != 1:
             return self.usage()
 
-        target = os.path.join($VIRTUALENV_HOME, args[0])
+        name = args[0]
+        target = os.path.join($VIRTUALENV_HOME, name)
         if not os.path.exists(target):
             return self.usage()
 
@@ -100,6 +103,8 @@ class VixCmd:
             $PROMPT = xonsh.environ.DEFAULT_PROMPT
         $PROMPT = '({}) '.format(args[0]) + $PROMPT
 
+        self._current_env = name
+
 
     def deactivate(self, args):
         if not __xonsh_env__.get('VIRTUAL_ENV', False):
@@ -112,6 +117,7 @@ class VixCmd:
             ${name} = value
         self._saved_vars = {}
         del $VIRTUAL_ENV
+        self._current_env = None
 
 
     def listenvs(self, args):
@@ -127,6 +133,11 @@ class VixCmd:
 
     def usage(self, args=()):
         print('consult non-existent documentation for usage')
+
+
+    def which(self, args=()):
+        if self._current_env:
+            print(self._current_env)
 
 
 aliases['vix'] = VixCmd()
