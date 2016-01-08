@@ -125,7 +125,7 @@ class VixCmd:
         rm -r @(os.path.join($VIRTUALENV_HOME, args[0]))
 
 
-    def usage(self):
+    def usage(self, args=()):
         print('consult non-existent documentation for usage')
 
 
