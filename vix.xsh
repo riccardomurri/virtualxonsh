@@ -78,6 +78,11 @@ class VixCmd:
         if len(args) != 1:
             return self.usage()
 
+        if __xonsh_env__.get('VIRTUALENVHOME', False):
+            sys.stderr.write(
+                "Please set environment variable `VIRTUALENV_HOME` first.")
+            return
+
         name = args[0]
         target = os.path.join($VIRTUALENV_HOME, name)
         if not os.path.exists(target):
@@ -121,6 +126,11 @@ class VixCmd:
 
 
     def listenvs(self, args):
+        if __xonsh_env__.get('VIRTUALENVHOME', False):
+            sys.stderr.write(
+                "Please set environment variable `VIRTUALENV_HOME` first.")
+            return
+
         for envdir in sorted(
                 entry for entry in os.listdir($VIRTUALENV_HOME)
                 if os.path.isdir(os.path.join($VIRTUALENV_HOME, entry))):
@@ -128,6 +138,11 @@ class VixCmd:
 
 
     def rmvirtualenv(self, args):
+        if __xonsh_env__.get('VIRTUALENVHOME', False):
+            sys.stderr.write(
+                "Please set environment variable `VIRTUALENV_HOME` first.")
+            return
+
         rm -r @(os.path.join($VIRTUALENV_HOME, args[0]))
 
 
